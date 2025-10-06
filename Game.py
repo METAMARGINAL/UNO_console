@@ -8,7 +8,7 @@ class Game:
         self.players = []
         self.top_card = None
         self.current_player_idx = 0
-        self.direction = 1
+        self.direction = 1  # 1 = по часовой, -1 = против часовой
 
     def add_player(self, player: Player):
         self.players.append(player)
@@ -27,11 +27,13 @@ class Game:
         print("\033[H\033[J", end="")
 
     def start(self):
+        # Раздаём карты игрокам
         for player in self.players:
             for _ in range(7):
                 player.draw_card(self.deck.pop())
 
-        # Первая карта не спецкарта
+        # Первая карта на столе должна быть обычной
+        import random
         while True:
             card = self.deck.pop()
             if not card.isSpecial:
@@ -39,13 +41,14 @@ class Game:
                 break
             else:
                 self.deck.insert(0, card)
-                import random
                 random.shuffle(self.deck)
 
         print(f"Первая карта на столе: {self.top_card}")
 
+        # Игровой цикл
         while True:
             self.play_turn()
+            # Проверка на победителя
             for player in self.players:
                 if not player.hand:
                     print(f"\n{player.name} выиграл игру! Поздравляем!")
@@ -66,8 +69,11 @@ class Game:
                     print("Вы взяли карту.")
                 else:
                     print("Колода пуста!")
+
+                # Переход хода следующему игроку
                 self.current_player_idx = (self.current_player_idx + self.direction) % len(self.players)
                 break
+
             elif choice.isdigit():
                 index = int(choice)
                 if index < 0 or index >= len(player.hand):
@@ -76,7 +82,8 @@ class Game:
                 card = player.hand[index]
                 if card.isPlayableOn(self.top_card):
                     player.play_card(index, self)
-                    if not card.isSpecial:
+                    # Для обычной карты или Wild (без спецэффекта) ход переходит следующему
+                    if not card.isSpecial or card.denomination == "wild":
                         self.current_player_idx = (self.current_player_idx + self.direction) % len(self.players)
                     break
                 else:

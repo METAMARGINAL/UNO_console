@@ -76,9 +76,6 @@ class WildCard(Card):
         self.color = chosen_color
         print(f"Цвет карты изменён на {self.color}")
 
-        # Передаём ход следующему игроку после обычного wild
-        game_state.current_player_idx = (game_state.current_player_idx + game_state.direction) % len(game_state.players)
-
 
 class DrawFourCard(Card):
     def __init__(self):
