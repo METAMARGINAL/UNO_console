@@ -73,6 +73,8 @@ class WildCard(Card):
 
     def special_action(self, game_state):
         chosen_color = input("Выберите цвет (red, blue, green, yellow): ").strip().lower()
+        while chosen_color not in ['red', 'blue', 'green', 'yellow']:
+            chosen_color = input("Выберите цвет (red, blue, green, yellow): ").strip().lower()
         self.color = chosen_color
         print(f"Цвет карты изменён на {self.color}")
 
