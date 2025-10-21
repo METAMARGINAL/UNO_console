@@ -9,6 +9,7 @@ class Game:
         self.top_card = None
         self.current_player_idx = 0
         self.direction = 1  # 1 = по часовой, -1 = против часовой
+        self.is_not_finished = True
 
     def add_player(self, player: Player):
         self.players.append(player)
@@ -34,7 +35,7 @@ class Game:
 
         # Первая карта на столе должна быть обычной
         import random
-        while True:
+        while self.is_not_finished:
             card = self.deck.pop()
             if not card.isSpecial:
                 self.top_card = card
@@ -46,7 +47,7 @@ class Game:
         print(f"Первая карта на столе: {self.top_card}")
 
         # Игровой цикл
-        while True:
+        while self.is_not_finished:
             self.play_turn()
             # Проверка на победителя
             for player in self.players:
@@ -61,8 +62,9 @@ class Game:
         print(f"Текущая карта на столе: {self.top_card}")
         print(f"Ваша рука: {player.show_hand()}")
 
-        while True:
-            choice = input("Введите номер карты для игры или 'd' чтобы взять карту: ").strip()
+        while self.is_not_finished:
+            choice = input("Введите номер карты для игры или 'd' чтобы взять карту: \n"
+                           'Чтобы выйти из игры - напишите "exit"').strip()
             if choice.lower() == 'd':
                 if self.deck:
                     player.draw_card(self.deck.pop())
@@ -89,4 +91,5 @@ class Game:
                 else:
                     print("Эту карту нельзя сыграть. Выберите другую.")
             else:
-                print("Некорректный ввод.")
+                if choice == "exit":
+                    self.is_not_finished = False
